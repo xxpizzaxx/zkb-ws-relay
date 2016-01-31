@@ -11,11 +11,8 @@ class Server(port: Int) {
 
   val routes = Routes({
 
-    case WebSocketHandshake(wsHandshake) => wsHandshake match {
-      case Path("/") => {
+    case WebSocketHandshake(wsHandshake) =>
         wsHandshake.authorize(maxFrameSize = Integer.MAX_VALUE)
-      }
-    }
     case WebSocketFrame(wsFrame) => {
       handler ! wsFrame
     }
