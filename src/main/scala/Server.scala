@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import moe.pizza.zkapi.ZKBAPI
 import org.mashupbots.socko.routes._
 import org.mashupbots.socko.webserver.{WebServer, WebServerConfig}
+import scala.util.Try
 
 class Server(port: Int) {
   val actorSystem = ActorSystem("zkb-relay-actor-system")
@@ -27,8 +28,12 @@ class Server(port: Int) {
   val broadcaster = new Thread(new Runnable {
     override def run(): Unit = {
       import actorSystem.dispatcher
-      zkb.redisq.stream().foreach { r =>
-        webServer.webSocketConnections.writeText(OM.writeValueAsString(r))
+      while (true) {
+        Try {
+          zkb.redisq.stream().foreach { r =>
+              webServer.webSocketConnections.writeText(OM.writeValueAsString(r))
+          }
+        }
       }
     }
   })
