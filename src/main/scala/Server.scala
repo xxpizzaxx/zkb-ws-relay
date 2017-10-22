@@ -5,6 +5,8 @@ import org.mashupbots.socko.webserver.{WebServer, WebServerConfig}
 import scala.util.Try
 import org.http4s._
 import org.http4s.client.blaze._
+import io.circe.syntax._
+import io.circe._
 
 class Server(port: Int) {
   val actorSystem = ActorSystem("zkb-relay-actor-system")
@@ -29,7 +31,7 @@ class Server(port: Int) {
       import actorSystem.dispatcher
       while (true) {
           zkb.redisq.stream().foreach { r =>
-              webServer.webSocketConnections.writeText(r.toString)
+              webServer.webSocketConnections.writeText(r.asJson.noSpaces)
           }
       }
     }
