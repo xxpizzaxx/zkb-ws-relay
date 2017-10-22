@@ -30,9 +30,13 @@ class Server(port: Int) {
     override def run(): Unit = {
       import actorSystem.dispatcher
       while (true) {
+        try {
           zkb.redisq.stream().foreach { r =>
-              webServer.webSocketConnections.writeText(r.asJson.noSpaces)
+            webServer.webSocketConnections.writeText(r.asJson.noSpaces)
           }
+        } catch {
+          case e => println(e)
+        }
       }
     }
   })
