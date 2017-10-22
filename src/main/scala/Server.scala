@@ -3,10 +3,13 @@ import moe.pizza.zkapi.ZKBAPI
 import org.mashupbots.socko.routes._
 import org.mashupbots.socko.webserver.{WebServer, WebServerConfig}
 import scala.util.Try
+import org.http4s._
+import org.http4s.client.blaze._
 
 class Server(port: Int) {
   val actorSystem = ActorSystem("zkb-relay-actor-system")
   val handler = actorSystem.actorOf(Props[HandlerActor])
+  implicit val client = PooledHttp1Client()
 
   val routes = Routes({
 
