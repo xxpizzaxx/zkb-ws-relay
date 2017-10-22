@@ -25,11 +25,9 @@ class Server(port: Int) {
     override def run(): Unit = {
       import actorSystem.dispatcher
       while (true) {
-        Try {
           zkb.redisq.stream().foreach { r =>
               webServer.webSocketConnections.writeText(r.toString)
           }
-        }
       }
     }
   })
