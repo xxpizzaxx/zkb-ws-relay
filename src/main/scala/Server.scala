@@ -11,7 +11,7 @@ import io.circe._
 class Server(port: Int) {
   val actorSystem = ActorSystem("zkb-relay-actor-system")
   val handler = actorSystem.actorOf(Props[HandlerActor])
-  implicit val client = PooledHttp1Client()
+  implicit val client = SimpleHttp1Client()
 
   val routes = Routes({
 
@@ -28,7 +28,6 @@ class Server(port: Int) {
 
   val broadcaster = new Thread(new Runnable {
     override def run(): Unit = {
-      import actorSystem.dispatcher
       while (true) {
         try {
           zkb.redisq.stream().foreach { r =>
